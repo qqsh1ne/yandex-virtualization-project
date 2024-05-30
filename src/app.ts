@@ -10,7 +10,6 @@ import {ApiError} from "./model";
 const app = express();
 app.use(express.json());
 
-// define api
 const api = new OpenAPIBackend({
     definition: path.join(__dirname, '..', 'openapi', 'api.yaml'),
     quick: true,
@@ -31,13 +30,10 @@ const api = new OpenAPIBackend({
 });
 api.init();
 
-// logging
 app.use(morgan('combined'));
 
-// use as express middleware
 app.use((req, res) => api.handleRequest(req as Request, req, res));
 
-// start server
 app.listen(process.env.PORT || 8080, () => console.info(`parks-api listening at http://localhost:${process.env.PORT || 8080}`));
 
 function stringOrLast(data: string | string[]): string {

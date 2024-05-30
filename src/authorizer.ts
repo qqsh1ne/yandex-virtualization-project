@@ -94,7 +94,7 @@ async function authenticate(authHeader: string): Promise<AuthContext> {
 
     const getSigningKey = util.promisify(client.getSigningKey);
     const key = await getSigningKey(decodedJwt.header.kid);
-    const signingKey = "publicKey" in key ? key.publicKey : "rsaPublicKey" in key ? key.rsaPublicKey : "";
+    const signingKey = "publicKey" in key! ? key.publicKey : "rsaPublicKey" in key! ? key.rsaPublicKey : "";
 
     const jwtPayload: JwtPayload | string = await jwt.verify(token, signingKey, jwtOptions);
 

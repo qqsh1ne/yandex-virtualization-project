@@ -5,6 +5,7 @@ export interface Park {
     vote_count?: number,
     vote_average?: number,
     overview?: string,
+    type?: string,
 }
 
 export interface ApiError {

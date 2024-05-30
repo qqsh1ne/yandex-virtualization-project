@@ -44,12 +44,14 @@ export async function savePark(park: Park): Promise<Park | ApiError> {
             "poster_path = :poster_path," +
             "vote_count = :vote_count, " +
             "vote_average = :vote_average, " +
+            "type = :type, " +
             "overview = :overview",
         ExpressionAttributeValues: {
             ":title": {"S": park.title || ""},
             ":poster_path": {"S": park.poster_path || ""},
             ":vote_count": {"N": park.vote_count?.toString() || "0"},
             ":vote_average": {"N": park.vote_average?.toString() || "0"},
+            ":type": {"S": park.type || ""},
             ":overview": {"S": park.overview || ""},
         }
     };
@@ -127,10 +129,13 @@ export async function getParks(limit?: number): Promise<Park[] | ApiError> {
         TableName: PARKS_TABLE,
         Limit: !limit || (limit > MAX_LIMIT) ? MAX_LIMIT : limit,
         IndexName: "VoteCountIndex",
-        KeyConditionExpression: "#p > :popularity",
-        ExpressionAttributeNames: {"#p": "popularity"},
+        KeyConditionExpression: "#t = :type AND #p > :vote_count",
+        ExpressionAttributeNames: {"#t": "type", "#p": "vote_count"},
         ExpressionAttributeValues: {
-            ":popularity": {
+            ":type": {
+                S: "park"
+            },
+            ":vote_count": {
                 N: "0"
             }
         },
@@ -142,7 +147,7 @@ export async function getParks(limit?: number): Promise<Park[] | ApiError> {
         return result.Items ? result.Items.map(value => unmarshall(value) as Park) : [];
     } catch (e) {
         console.error("Failed to get parks: ", e);
-        return {message: (e as SdkError).message} as ApiError;
+        return {message: '(e as SdkError).message'} as ApiError;
     }
 }
 

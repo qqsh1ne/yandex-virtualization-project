@@ -18,6 +18,7 @@ interface dbPark {
     poster_path: string,
     vote_count: number,
     vote_average: number,
+    type: string,
     overview: string,
 }
 
@@ -26,14 +27,14 @@ function transform(dbPark: dbPark): Park {
         id: dbPark.id,
         title: dbPark.title,
         poster_path: dbPark.poster_path,
-        vote_average: dbPark.vote_average / 2,
+        vote_average: dbPark.vote_average,
         vote_count: dbPark.vote_count,
+        type: dbPark.type,
         overview: dbPark.overview,
     };
 }
 
 export const handler = async (event: any): Promise<any> => {
-    // genres удалены
     const dbParks: dbPark[] = await (await fetch("https://storage.yandexcloud.net/project-parks-images/parks.json")).json() as dbPark[];
 
     for (let i = 0; i < PARKS_COUNT; i++) {
